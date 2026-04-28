@@ -330,11 +330,7 @@ fairlens-ai/
 
 ---
 
-## 👥 Team
-
-| Name | Role |
-|------|------|
-| **Deveeramma J R** | Full-Stack Developer |
+## 👥 Team — Boolean Bandits
 
 ---
 
