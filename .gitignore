@@ -1,0 +1,12 @@
+node_modules/
+dist/
+deploy/
+deploy.zip
+deploy.tar.gz
+.env
+*.log
+.DS_Store
+.vscode/
+prompt1.md
+src/components/p2.md
+generate_ppt.py
