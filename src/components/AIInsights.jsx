@@ -15,7 +15,7 @@ export default function AIInsights({
   const [isLoadingCode, setIsLoadingCode] = useState(false);
   const [language, setLanguage] = useState('English');
 
-  const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Hindi', 'Chinese', 'Japanese', 'Arabic'];
+  const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Hindi', 'Chinese', 'Japanese', 'Arabic', 'Kannada'];
 
   if (!analysisResult) {
     return (
@@ -34,16 +34,23 @@ export default function AIInsights({
     );
   }
 
-  const fetchInsights = async () => {
+  const fetchInsights = async (selectedLang = language) => {
     setIsLoading(true);
     setError('');
     try {
-      const text = await generateBiasInsights(analysisResult, language);
+      const text = await generateBiasInsights(analysisResult, selectedLang);
       setAiInsightsText(text);
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLanguageChange = async (lang) => {
+    setLanguage(lang);
+    if (aiInsightsText) {
+      await fetchInsights(lang);
     }
   };
 
@@ -120,7 +127,7 @@ export default function AIInsights({
                 <button
                   key={lang}
                   className={`column-chip ${language === lang ? 'selected' : ''}`}
-                  onClick={() => setLanguage(lang)}
+                  onClick={() => handleLanguageChange(lang)}
                   style={{ padding: '4px 12px', fontSize: '0.75rem' }}
                 >
                   {lang}

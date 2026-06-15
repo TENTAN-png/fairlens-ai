@@ -14,6 +14,7 @@ import {
   SAMPLE_COLUMNS, SAMPLE_SENSITIVE_COL, SAMPLE_TARGET_COL,
   SAMPLE_FAVORABLE_VALUE, SAMPLE_PRIVILEGED_VALUE
 } from '../data/sampleData';
+import InfoTooltip from './InfoTooltip';
 
 export default function UploadPanel({
   parsedData, setParsedData, analysisResult, setAnalysisResult, onViewReport
@@ -48,6 +49,7 @@ export default function UploadPanel({
     }
     try {
       const result = await parseCSV(file);
+      result.file = file; // Attach real File object
       setParsedData(result);
       setFileInfo({ name: file.name, size: file.size });
       setColumnStats(getColumnStats(result.data, result.columns));
@@ -69,15 +71,30 @@ export default function UploadPanel({
   });
 
   const loadSampleData = () => {
+    // Generate real File object from sample data so backend can read it
+    const csvHeaders = SAMPLE_COLUMNS.join(',');
+    const csvRows = SAMPLE_CSV_DATA.map(row => 
+      SAMPLE_COLUMNS.map(col => {
+        const val = row[col];
+        if (typeof val === 'string' && val.includes(',')) {
+          return `"${val.replace(/"/g, '""')}"`;
+        }
+        return val !== null && val !== undefined ? val : '';
+      }).join(',')
+    );
+    const csvContent = [csvHeaders, ...csvRows].join('\n');
+    const mockFile = new File([csvContent], 'adult_census_sample.csv', { type: 'text/csv' });
+
     const result = {
       columns: SAMPLE_COLUMNS,
       data: SAMPLE_CSV_DATA,
       rowCount: SAMPLE_CSV_DATA.length,
       columnCount: SAMPLE_COLUMNS.length,
-      preview: SAMPLE_CSV_DATA.slice(0, 10)
+      preview: SAMPLE_CSV_DATA.slice(0, 10),
+      file: mockFile
     };
     setParsedData(result);
-    setFileInfo({ name: SAMPLE_DATA_NAME, size: 0 });
+    setFileInfo({ name: SAMPLE_DATA_NAME, size: csvContent.length });
     setColumnStats(getColumnStats(result.data, result.columns));
     setSensitiveCol(SAMPLE_SENSITIVE_COL);
     setTargetCol(SAMPLE_TARGET_COL);
@@ -257,8 +274,9 @@ export default function UploadPanel({
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               <div className="input-group">
-                <label className="input-label">
-                  Protected Attribute <span style={{ color: 'var(--danger)' }}>*</span>
+                <label className="input-label" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  Sensitive Group Category <span style={{ color: 'var(--danger)', marginRight: 4 }}>*</span>
+                  <InfoTooltip text="The demographic category you want to check for bias (e.g., gender, race, age)." />
                 </label>
                 <select
                   className="input"
@@ -273,8 +291,9 @@ export default function UploadPanel({
               </div>
 
               <div className="input-group">
-                <label className="input-label">
-                  Outcome Column <span style={{ color: 'var(--danger)' }}>*</span>
+                <label className="input-label" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  Decision Outcome Column <span style={{ color: 'var(--danger)', marginRight: 4 }}>*</span>
+                  <InfoTooltip text="The column representing the decision or result (e.g., whether someone was approved, hired, or accepted)." />
                 </label>
                 <select
                   className="input"
@@ -289,8 +308,9 @@ export default function UploadPanel({
               </div>
 
               <div className="input-group">
-                <label className="input-label">
-                  Privileged Group <span style={{ color: 'var(--danger)' }}>*</span>
+                <label className="input-label" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  Advantaged Group <span style={{ color: 'var(--danger)', marginRight: 4 }}>*</span>
+                  <InfoTooltip text="The specific demographic group that has historically or currently received higher positive outcomes (e.g., Male, White)." />
                 </label>
                 <select
                   className="input"
@@ -302,12 +322,13 @@ export default function UploadPanel({
                   <option value="">Select value...</option>
                   {getColumnValues(sensitiveCol).map(v => <option key={v} value={v}>{v}</option>)}
                 </select>
-                <span className="text-xs text-tertiary">The advantaged group</span>
+                <span className="text-xs text-tertiary">The group receiving favorable rates</span>
               </div>
 
               <div className="input-group">
-                <label className="input-label">
-                  Favorable Outcome <span style={{ color: 'var(--danger)' }}>*</span>
+                <label className="input-label" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  Positive Decision Value <span style={{ color: 'var(--danger)', marginRight: 4 }}>*</span>
+                  <InfoTooltip text="The positive or preferred outcome value in your data (e.g., 'Approved', 'Hired', or '1')." />
                 </label>
                 <select
                   className="input"
@@ -319,7 +340,7 @@ export default function UploadPanel({
                   <option value="">Select value...</option>
                   {getColumnValues(targetCol).map(v => <option key={v} value={v}>{v}</option>)}
                 </select>
-                <span className="text-xs text-tertiary">The positive outcome</span>
+                <span className="text-xs text-tertiary">The desired result</span>
               </div>
             </div>
 

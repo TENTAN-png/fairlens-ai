@@ -1,0 +1,47 @@
+# FairLens AI — Python Backend Dependencies
+# Pin only where critical, let pip resolve the rest
+
+# Core API
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+pydantic>=2.6.0
+python-dotenv>=1.0.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0,<2.0.0
+openpyxl>=3.1.0
+pyarrow>=16.0.0
+
+# Machine Learning
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+
+# Fairness
+fairlearn>=0.10.0
+
+# Explainability
+shap>=0.44.0
+
+# Synthetic Data (let pip pick compatible ctgan/sdv pair)
+ctgan>=0.10.0
+sdv>=1.15.0
+
+# LangGraph / LangChain
+langgraph>=0.1.0
+langchain>=0.2.0
+
+# Google AI — use direct SDK only (no langchain-google-genai needed)
+google-generativeai>=0.5.2
+
+# Groq
+groq>=0.9.0
+
+# Document Processing
+pdfplumber>=0.10.0
+python-docx>=1.1.0
+
+# HTTP
+httpx>=0.27.0
+aiofiles>=23.2.0

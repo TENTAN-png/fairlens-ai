@@ -1,133 +1,149 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// ─── API Keys ────────────────────────────────────────────────────────────────
+// Priority: localStorage (user-set) → env var (built-in) → null
+const BUILTIN_GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const BUILTIN_GROQ_KEY   = import.meta.env.VITE_GROQ_API_KEY || '';
+const geminiKey = localStorage.getItem('fairlens_api_key') || BUILTIN_GEMINI_KEY;
+const groqKey   = localStorage.getItem('fairlens_groq_key') || BUILTIN_GROQ_KEY;
+
+function looksLikeGroqKey(key) {
+  return key?.startsWith('gsk_') || false;
+}
+
 let genAI = null;
-let groqApiKey = null;
+if (geminiKey) {
+  try { genAI = new GoogleGenerativeAI(geminiKey); } catch { genAI = null; }
+}
 
-// Gemini models to try
+let groqApiKey = groqKey || null;
+
+// ─── Model Lists ─────────────────────────────────────────────────────────────
 const GEMINI_MODELS = ['gemini-2.0-flash-lite', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+const GROQ_MODELS   = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it', 'mixtral-8x7b-32768'];
 
-// Groq models to try (fast + free tier is generous)
-const GROQ_MODELS = ['llama-3.1-8b-instant', 'gemma2-9b-it', 'mixtral-8x7b-32768'];
-
-/**
- * Initialize APIs
- */
+// ─── Init ────────────────────────────────────────────────────────────────────
 export function initGeminiAPI(apiKey) {
-  genAI = new GoogleGenerativeAI(apiKey);
+  if (!apiKey) return;
+  if (looksLikeGroqKey(apiKey)) {
+    // Auto-route mis-pasted Groq keys
+    groqApiKey = apiKey;
+    localStorage.setItem('fairlens_groq_key', apiKey);
+    return;
+  }
+  try { genAI = new GoogleGenerativeAI(apiKey); } catch { genAI = null; }
 }
 
 export function initGroqAPI(apiKey) {
+  if (!apiKey) return;
   groqApiKey = apiKey;
 }
 
-export function isGeminiReady() {
-  return genAI !== null;
-}
+export function isGeminiReady() { return genAI !== null || groqApiKey !== null; }
+export function isGroqReady()   { return groqApiKey !== null; }
 
-export function isGroqReady() {
-  return groqApiKey !== null;
-}
-
-/**
- * Try Gemini models (fail fast)
- */
-async function tryGemini(prompt) {
-  if (!genAI) return null;
+// ─── Try Gemini ───────────────────────────────────────────────────────────────
+async function tryGemini(prompt, language = 'English') {
+  if (!genAI) {
+    console.warn('FairLens: Gemini not initialized (genAI is null). Key in localStorage:', localStorage.getItem('fairlens_api_key')?.slice(0, 8) + '...');
+    return null;
+  }
   for (const modelName of GEMINI_MODELS) {
     try {
-      console.log(`Trying Gemini: ${modelName}...`);
+      console.log(`FairLens: Trying Gemini model "${modelName}"...`);
       const model = genAI.getGenerativeModel({ model: modelName });
-      const result = await model.generateContent(prompt);
+      const config = {};
+      if (language !== 'English') {
+        config.systemInstruction = `You are a professional AI fairness scanner. Respond entirely in ${language}. Translate all headings, summaries, metrics, and bullet points. Do not output any English.`;
+      }
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        ...config,
+      });
+      console.log(`FairLens: ✅ Gemini "${modelName}" succeeded`);
       return result.response.text();
     } catch (e) {
-      console.warn(`Gemini ${modelName} failed: ${e.message?.slice(0, 80)}`);
+      console.warn(`FairLens: ❌ Gemini ${modelName} failed:`, e.message?.slice(0, 200));
     }
   }
   return null;
 }
 
-/**
- * Try Groq models (fail fast)
- */
-async function tryGroq(prompt) {
+// ─── Try Groq ─────────────────────────────────────────────────────────────────
+async function tryGroq(prompt, language = 'English') {
   if (!groqApiKey) return null;
   for (const model of GROQ_MODELS) {
     try {
-      console.log(`Trying Groq: ${model}...`);
+      const messages = [];
+      if (language !== 'English') {
+        messages.push({
+          role: 'system',
+          content: `You are a professional AI fairness assistant. Respond entirely in ${language}. Translate all headings, summaries, and bullet points.`,
+        });
+      }
+      messages.push({ role: 'user', content: prompt });
+
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${groqApiKey}`
+          Authorization: `Bearer ${groqApiKey}`,
         },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.7,
-          max_tokens: 4096
-        })
+        body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 4096 }),
       });
       if (!res.ok) {
         const err = await res.text();
-        console.warn(`Groq ${model} failed: ${res.status} ${err.slice(0, 80)}`);
+        console.warn(`Groq ${model} failed: ${res.status} — ${err.slice(0, 100)}`);
         continue;
       }
       const data = await res.json();
       return data.choices?.[0]?.message?.content || null;
     } catch (e) {
-      console.warn(`Groq ${model} failed: ${e.message?.slice(0, 80)}`);
+      console.warn(`Groq ${model} error: ${e.message?.slice(0, 100)}`);
     }
   }
   return null;
 }
 
-/**
- * Try Gemini → Groq → Offline fallback
- */
-async function generateWithFallback(prompt, offlineFn) {
-  // 1. Try Gemini
-  const geminiResult = await tryGemini(prompt);
+// ─── Fallback Chain: Gemini → Groq → Offline ─────────────────────────────────
+async function generateWithFallback(prompt, offlineFn, language = 'English') {
+  const geminiResult = await tryGemini(prompt, language);
   if (geminiResult) return { text: geminiResult, source: 'Gemini AI' };
 
-  // 2. Try Groq
-  const groqResult = await tryGroq(prompt);
+  const groqResult = await tryGroq(prompt, language);
   if (groqResult) return { text: groqResult, source: 'Groq AI (Llama)' };
 
-  // 3. Offline fallback
-  console.log('All APIs failed — using offline analysis');
   return { text: offlineFn(), source: 'FairLens Offline Engine' };
 }
 
-/**
- * Generate offline bias insights from computed metrics
- */
+// ─── Offline Fallbacks ────────────────────────────────────────────────────────
 function generateOfflineInsights(r) {
-  const di = r.disparateImpact;
+  const di  = r.disparateImpact;
   const spd = r.statisticalParityDiff;
   const groups = r.groupRates;
-  const meta = r.meta;
-  const diPass = di !== null && di >= 0.8 && di <= 1.25;
+  const meta   = r.meta;
+  const diPass  = di  !== null && di  >= 0.8 && di  <= 1.25;
   const spdPass = spd !== null && Math.abs(spd) < 0.1;
   const groupEntries = Object.entries(groups).sort((a, b) => b[1].rate - a[1].rate);
-  const bestGroup = groupEntries[0];
+  const bestGroup  = groupEntries[0];
   const worstGroup = groupEntries[groupEntries.length - 1];
-  const rateGap = bestGroup && worstGroup ? ((bestGroup[1].rate - worstGroup[1].rate) * 100).toFixed(1) : '0';
+  const rateGap = bestGroup && worstGroup
+    ? ((bestGroup[1].rate - worstGroup[1].rate) * 100).toFixed(1)
+    : '0';
 
   return `### 🔍 Bias Summary
 
-The analysis of **${meta.totalRows} records** reveals ${r.severity.level === 'good' ? 'minimal' : r.severity.level === 'warning' ? 'moderate' : 'significant'} bias in the **${meta.targetCol}** outcomes across the **${meta.sensitiveCol}** attribute. The privileged group (**${meta.privilegedValue}**) shows a selection rate of **${(groups[meta.privilegedValue]?.rate * 100 || 0).toFixed(1)}%** for the favorable outcome (**${meta.favorableValue}**), while unprivileged groups average a ${spd && spd < 0 ? 'lower' : 'comparable'} rate. ${r.severity.level !== 'good' ? `This ${rateGap}% gap suggests that ${meta.sensitiveCol} is influencing outcomes in a potentially discriminatory way.` : 'The rates are within acceptable fairness thresholds.'}
+Analysis of **${meta.totalRows} records** shows ${r.severity.level === 'good' ? 'minimal' : r.severity.level === 'warning' ? 'moderate' : 'significant'} bias in **${meta.targetCol}** outcomes across **${meta.sensitiveCol}**.
+The privileged group (**${meta.privilegedValue}**) has a selection rate of **${(groups[meta.privilegedValue]?.rate * 100 || 0).toFixed(1)}%**.
+${r.severity.level !== 'good' ? `The ${rateGap}% gap suggests ${meta.sensitiveCol} is influencing outcomes unfairly.` : 'Rates are within acceptable fairness thresholds.'}
 
 ### 📊 Metric Interpretation
 
-**Disparate Impact Ratio: ${di?.toFixed(4) ?? 'N/A'}**
-- This measures the ratio of favorable outcome rates between unprivileged and privileged groups
-- The EEOC "80% rule" considers values below **0.8** as evidence of adverse impact
-- ${diPass ? `✅ **PASSES** the 80% rule — the ratio of ${di?.toFixed(3)} is within the acceptable range (0.8–1.25)` : `⚠️ **FAILS** the 80% rule — a ratio of ${di?.toFixed(3)} ${di && di < 0.8 ? 'falls below the 0.8 threshold, indicating adverse impact against unprivileged groups' : 'exceeds 1.25, indicating reverse disparity'}`}
+**Fairness Check Score: ${di?.toFixed(4) ?? 'N/A'}**
+${diPass ? '✅ PASSES — ratio is within the acceptable range (0.8–1.25)' : `⚠️ FAILS — ratio of ${di?.toFixed(3)} indicates adverse impact`}
 
-**Statistical Parity Difference: ${spd?.toFixed(4) ?? 'N/A'}**
-- The raw difference in selection rates: P(favorable | unprivileged) − P(favorable | privileged)
-- Values beyond **±0.1** are generally considered significant
-- ${spdPass ? `✅ Within acceptable range` : `⚠️ The difference of ${spd?.toFixed(3)} indicates ${spd && spd < 0 ? 'bias against unprivileged groups' : 'reverse disparity'}`}
+**Fairness Gap: ${spd?.toFixed(4) ?? 'N/A'}**
+${spdPass ? '✅ Within acceptable range' : `⚠️ Gap of ${spd?.toFixed(3)} indicates ${spd && spd < 0 ? 'bias against unprivileged groups' : 'reverse disparity'}`}
 
 ### ⚠️ Key Findings
 
@@ -135,28 +151,27 @@ ${groupEntries.map(([group, info], i) => {
   const rate = (info.rate * 100).toFixed(1);
   const isPriv = group === meta.privilegedValue;
   const comparison = isPriv ? '(reference group)' :
-    info.rate >= groups[meta.privilegedValue]?.rate * 0.8 ? '✅ within fair range' : '⚠️ below fairness threshold';
+    info.rate >= (groups[meta.privilegedValue]?.rate ?? 0) * 0.8 ? '✅ within fair range' : '⚠️ below fairness threshold';
   return `${i + 1}. **${group}**: ${rate}% favorable outcome rate (${info.favorable}/${info.total}) — ${comparison}`;
 }).join('\n')}
 
-### 🛡️ Mitigation Recommendations
+### 🛡️ Improvement Recommendations
 
-1. **Reweighting (Data-Level)**: Assign sample weights inversely proportional to group representation × outcome rate to balance contributions during training.
-2. **Stratified Resampling (Data-Level)**: Oversample underrepresented favorable outcomes to achieve demographic parity in training data.
-3. **Fairness Constraints (Model-Level)**: Use Fairlearn or AI Fairness 360 to add demographic parity constraints during optimization.
-4. **Calibrated Equalized Odds (Model-Level)**: Post-process predictions to equalize true positive and false positive rates across groups.
-5. **Human-in-the-Loop (Process-Level)**: Route divergent predictions to human reviewers for manual assessment.
-6. **Regular Auditing (Process-Level)**: Recompute fairness metrics monthly; alert if DI drops below 0.85.
+1. **Reweighting**: Assign sample weights inversely proportional to group representation to balance training contributions.
+2. **Stratified Resampling**: Oversample underrepresented favorable outcomes for demographic parity.
+3. **Fairness Constraints**: Use Fairlearn to add demographic parity constraints during optimization.
+4. **Post-Processing**: Equalize true positive and false positive rates across groups.
+5. **Regular Auditing**: Recompute fairness metrics monthly; alert if score drops below 85.
 
 ### 📋 Regulatory Compliance
 
-- **EEOC 80% Rule (US)**: DI below 0.8 is prima facie evidence of discrimination
+- **EEOC 80% Rule (US)**: Score below 0.8 is prima facie evidence of discrimination
 - **EU AI Act (2024)**: Hiring/credit/justice AI mandates bias audits and transparency
-- **GDPR Article 22 (EU)**: Right to not be subject to purely automated decisions`;
+- **GDPR Article 22 (EU)**: Right not to be subject to purely automated decisions`;
 }
 
 function generateOfflineMitigationCode(r) {
-  return `### Bias Mitigation Code Snippets
+  return `### Fairness Improvement Code Snippets
 
 Python code to address **${r.meta.sensitiveCol}** bias on **${r.meta.targetCol}** outcomes.
 
@@ -171,7 +186,6 @@ import numpy as np
 def compute_sample_weights(df, sensitive_col='${r.meta.sensitiveCol}', target_col='${r.meta.targetCol}', favorable='${r.meta.favorableValue}'):
     weights = np.ones(len(df))
     overall_rate = (df[target_col] == favorable).mean()
-    
     for group in df[sensitive_col].unique():
         mask = df[sensitive_col] == group
         group_rate = (df.loc[mask, target_col] == favorable).mean()
@@ -182,7 +196,7 @@ def compute_sample_weights(df, sensitive_col='${r.meta.sensitiveCol}', target_co
 # Usage: model.fit(X, y, sample_weight=compute_sample_weights(df))
 \`\`\`
 
-### 2. Oversampling Underrepresented Groups
+### 2. Balanced Resampling
 
 \`\`\`python
 from sklearn.utils import resample
@@ -200,65 +214,42 @@ def balanced_resample(df, sensitive_col='${r.meta.sensitiveCol}', target_col='${
     return pd.concat(parts, ignore_index=True)
 \`\`\`
 
-### 3. Post-Processing Calibration
-
-\`\`\`python
-import numpy as np
-
-def calibrate_predictions(y_pred, sensitive, privileged='${r.meta.privilegedValue}'):
-    calibrated = y_pred.copy()
-    priv_rate = y_pred[sensitive == privileged].mean()
-    unpriv_rate = y_pred[sensitive != privileged].mean()
-    if unpriv_rate > 0 and unpriv_rate < priv_rate:
-        calibrated[sensitive != privileged] = np.clip(y_pred[sensitive != privileged] * (priv_rate / unpriv_rate), 0, 1)
-    return calibrated
-\`\`\`
-
 *Generated by FairLens AI*`;
 }
 
-// ============================================
-// Build the prompts
-// ============================================
-
-function buildInsightsPrompt(analysisResult) {
+// ─── Prompt Builders ──────────────────────────────────────────────────────────
+function buildInsightsPrompt(r) {
   return `You are a fairness and bias expert AI assistant analyzing a dataset for hidden discrimination.
 
 **Dataset Info:**
-- Total rows: ${analysisResult.meta.totalRows}
-- Sensitive attribute: "${analysisResult.meta.sensitiveCol}"
-- Target/outcome: "${analysisResult.meta.targetCol}"
-- Favorable outcome: "${analysisResult.meta.favorableValue}"
-- Privileged group: "${analysisResult.meta.privilegedValue}"
+- Total rows: ${r.meta.totalRows}
+- Sensitive attribute: "${r.meta.sensitiveCol}"
+- Target/outcome: "${r.meta.targetCol}"
+- Favorable outcome: "${r.meta.favorableValue}"
+- Privileged group: "${r.meta.privilegedValue}"
 
 **Metrics:**
-- Disparate Impact Ratio: ${analysisResult.disparateImpact?.toFixed(4) ?? 'N/A'} (ideal: 1.0, bias: <0.8 or >1.25)
-- Statistical Parity Difference: ${analysisResult.statisticalParityDiff?.toFixed(4) ?? 'N/A'} (ideal: 0, bias: |SPD|>0.1)
-- Fairness Score: ${analysisResult.fairnessScore}/100
-- Severity: ${analysisResult.severity.label}
+- Fairness Check Score: ${r.disparateImpact?.toFixed(4) ?? 'N/A'} (ideal: 1.0, bias: <0.8 or >1.25)
+- Fairness Gap: ${r.statisticalParityDiff?.toFixed(4) ?? 'N/A'} (ideal: 0, bias: |gap|>0.1)
+- Overall Fairness Score: ${r.fairnessScore}/100
+- Severity: ${r.severity.label}
 
 **Group Rates:**
-${Object.entries(analysisResult.groupRates).map(([g, i]) => `- ${g}: ${(i.rate*100).toFixed(1)}% (${i.favorable}/${i.total})`).join('\n')}
+${Object.entries(r.groupRates).map(([g, i]) => `- ${g}: ${(i.rate*100).toFixed(1)}% (${i.favorable}/${i.total})`).join('\n')}
 
-Provide analysis with: ### 🔍 Bias Summary, ### 📊 Metric Interpretation, ### ⚠️ Key Findings, ### 🛡️ Mitigation Recommendations, ### 📋 Regulatory Compliance. Use markdown.`;
+Provide structured analysis with sections: ### 🔍 Bias Summary, ### 📊 Metric Interpretation, ### ⚠️ Key Findings, ### 🛡️ Improvement Recommendations, ### 📋 Regulatory Compliance. Use plain, non-technical language for HR managers and compliance officers. Use markdown.`;
 }
 
-function buildCodePrompt(analysisResult) {
-  return `You are a bias expert. Given: sensitive="${analysisResult.meta.sensitiveCol}", target="${analysisResult.meta.targetCol}", DI=${analysisResult.disparateImpact?.toFixed(4)}, SPD=${analysisResult.statisticalParityDiff?.toFixed(4)}, Score=${analysisResult.fairnessScore}/100.
-
+function buildCodePrompt(r) {
+  return `You are a fairness engineering expert. Given: sensitive="${r.meta.sensitiveCol}", target="${r.meta.targetCol}", fairness score=${r.fairnessScore}/100.
 Provide Python code for: 1) Dataset reweighting 2) SMOTE oversampling 3) Post-processing calibration. Use pandas/sklearn.`;
 }
 
-// ============================================
-// Public API
-// ============================================
-
+// ─── Public API ───────────────────────────────────────────────────────────────
 export async function generateBiasInsights(analysisResult, language = 'English') {
   let prompt = buildInsightsPrompt(analysisResult);
-  if (language !== 'English') {
-    prompt += `\n\nIMPORTANT: Respond entirely in ${language}.`;
-  }
-  const { text, source } = await generateWithFallback(prompt, () => generateOfflineInsights(analysisResult));
+  if (language !== 'English') prompt += `\n\nIMPORTANT: Respond entirely in ${language}. Translate everything.`;
+  const { text, source } = await generateWithFallback(prompt, () => generateOfflineInsights(analysisResult), language);
   return `*Powered by ${source}*\n\n${text}`;
 }
 
@@ -269,9 +260,13 @@ export async function generateMitigationCode(analysisResult) {
 }
 
 export async function generateWithFallbackChat(prompt) {
-  const geminiResult = await tryGemini(prompt);
-  if (geminiResult) return geminiResult;
-  const groqResult = await tryGroq(prompt);
-  if (groqResult) return groqResult;
-  return 'I\'m currently offline. Please check your API keys in Settings, or try again later.';
+  const g = await tryGemini(prompt);
+  if (g) return g;
+  const q = await tryGroq(prompt);
+  if (q) return q;
+  return "I'm currently offline. Please add a valid Gemini API key (starts with AIza or AQ.) from Google AI Studio, or a Groq API key (starts with gsk_) from console.groq.com in Settings.";
+}
+
+export async function generateAIInsights(prompt) {
+  return generateWithFallbackChat(prompt);
 }

@@ -1,0 +1,1101 @@
+ADVANCED FAIRLENS AI TECHNOLOGY STACK
+
+Use the best combination of Google technologies, open-source AI frameworks, modern frontend tools, machine learning libraries, explainability frameworks, fairness toolkits, databases, monitoring systems, and deployment tools.
+
+The architecture should be enterprise-grade, scalable, modular, and realistic for implementation by a student team.
+
+==================================================
+
+GOOGLE TECHNOLOGIES
+
+Generative AI
+
+* Gemini 2.5 Flash
+* Gemini 2.5 Pro
+
+Authentication
+
+* Firebase Authentication
+* Google OAuth
+
+Database
+
+* Firestore
+
+Analytics
+
+* BigQuery
+* Looker Studio
+
+Hosting
+
+* Firebase Hosting
+
+Backend Deployment
+
+* Cloud Run
+
+Storage
+
+* Firebase Storage
+* Google Cloud Storage
+
+Automation
+
+* Cloud Functions
+
+Monitoring
+
+* Cloud Monitoring
+
+Integrations
+
+* Google Sheets API
+* Google Drive API
+* Gmail API
+
+==================================================
+
+FRONTEND STACK
+
+* React
+* TypeScript
+* Next.js (optional)
+* Tailwind CSS
+* Material UI
+* Framer Motion
+* Recharts
+* Plotly
+* React Flow
+* React Query
+
+Purpose
+
+* Modern UI
+* Dashboard Visualizations
+* Workflow Builders
+* Knowledge Graphs
+* Agent Visualization
+
+==================================================
+
+BACKEND STACK
+
+* FastAPI
+* Python
+* Node.js (optional microservices)
+
+Purpose
+
+* ML APIs
+* Agent Orchestration
+* File Processing
+* Model Auditing
+
+==================================================
+
+MULTI AGENT FRAMEWORK
+
+Primary
+
+* LangGraph
+
+Optional
+
+* CrewAI
+* AutoGen
+
+Purpose
+
+* Multi-Agent Governance
+* Compliance Review
+* Fairness Auditing
+* Report Generation
+
+==================================================
+
+MACHINE LEARNING
+
+Prediction Models
+
+* XGBoost
+* Random Forest
+* LightGBM
+* CatBoost
+
+Use Cases
+
+* Bias Risk Prediction
+* Governance Scoring
+* Risk Classification
+
+==================================================
+
+EXPLAINABLE AI
+
+* SHAP
+* LIME
+
+Use Cases
+
+* Decision Explanations
+* Root Cause Analysis
+* Feature Impact Analysis
+
+==================================================
+
+FAIRNESS FRAMEWORKS
+
+Primary
+
+* Fairlearn
+
+Secondary
+
+* IBM AIF360
+
+Use Cases
+
+* Bias Detection
+* Fairness Improvements
+* Fairness Metrics
+* Automated Mitigation
+
+==================================================
+
+SYNTHETIC DATA GENERATION
+
+* CTGAN
+* SDV
+
+Use Cases
+
+* Balanced Data Generation
+* Minority Group Augmentation
+* Privacy Preserving Datasets
+
+==================================================
+
+NATURAL LANGUAGE PROCESSING
+
+* Sentence Transformers
+* HuggingFace Transformers
+* spaCy
+
+Use Cases
+
+* Policy Analysis
+* Compliance Analysis
+* Document Understanding
+* Semantic Search
+
+==================================================
+
+VECTOR DATABASES
+
+Choose one:
+
+* ChromaDB
+* FAISS
+* Qdrant
+* Weaviate
+
+Use Cases
+
+* RAG Auditing
+* Knowledge Search
+* Policy Retrieval
+
+==================================================
+
+GRAPH TECHNOLOGIES
+
+* Neo4j
+* NetworkX
+
+Use Cases
+
+* Fairness Knowledge Graph
+* Bias Propagation Visualization
+* Relationship Analysis
+
+==================================================
+
+DOCUMENT PROCESSING
+
+* PyMuPDF
+* pdfplumber
+* Unstructured.io
+* OCR (Tesseract)
+
+Use Cases
+
+* PDF Auditing
+* Policy Extraction
+* Compliance Review
+
+==================================================
+
+REAL-TIME STREAMING
+
+* Apache Kafka
+* Google Pub/Sub
+* RabbitMQ
+
+Use Cases
+
+* Live Fairness Monitoring
+* Decision Streams
+* Real-Time Alerts
+
+==================================================
+
+MONITORING AND OBSERVABILITY
+
+* Grafana
+* Prometheus
+
+Use Cases
+
+* Fairness Monitoring
+* Governance Monitoring
+* System Health
+
+==================================================
+
+DATA PROCESSING
+
+* Pandas
+* NumPy
+* Polars
+
+Use Cases
+
+* Data Cleaning
+* Data Analysis
+* Feature Engineering
+
+==================================================
+
+MODEL MONITORING
+
+* Evidently AI
+
+Use Cases
+
+* Data Drift
+* Fairness Drift
+* Performance Monitoring
+
+==================================================
+
+SECURITY
+
+* JWT Authentication
+* OAuth2
+* Firebase Security Rules
+
+==================================================
+
+DEVOPS
+
+* Docker
+* GitHub Actions
+
+Optional
+
+* Terraform
+
+==================================================
+
+AI AUDITING CAPABILITIES
+
+The platform should be capable of auditing:
+
+1. Datasets
+2. Machine Learning Models
+3. Generative AI Systems
+4. Chatbots
+5. RAG Applications
+6. HR Systems
+7. Loan Approval Systems
+8. Healthcare AI
+9. Educational AI
+10. Government AI Systems
+
+==================================================
+
+COMPETITIVE POSITIONING
+
+FairLens AI should be positioned as:
+
+A Responsible AI Governance Platform that combines:
+
+* Generative AI
+* Explainable AI
+* Fairness Engineering
+* Compliance Automation
+* Multi-Agent Intelligence
+* Synthetic Data Generation
+* Real-Time Monitoring
+* Governance Analytics
+
+to help organizations build fair, transparent, accountable, and trustworthy AI systems.
+Frontend
+---------
+React
+Tailwind
+Material UI
+
+Backend
+---------
+FastAPI
+
+Google
+---------
+Gemini
+Firebase Auth
+Firestore
+Cloud Run
+BigQuery
+
+AI
+---------
+LangGraph
+SHAP
+XGBoost
+Fairlearn
+CTGAN
+
+RAG
+---------
+ChromaDB
+
+Monitoring
+---------
+Evidently AI
+
+Visualization
+---------
+Plotly
+Recharts
+
+Graphs
+---------
+Neo4j
+
+BUILD FAIRLENS AI 4.0
+
+PROJECT VISION
+
+Transform FairLens AI from a CSV-based bias detection tool into a complete Responsible AI Governance Platform.
+
+The platform should help organizations audit datasets, machine learning models, generative AI systems, chatbots, RAG systems, documents, policies, and real-time AI decision streams for fairness, transparency, accountability, and compliance.
+
+The solution should be designed as a Google Cloud-native platform using free-tier friendly Google technologies wherever possible.
+
+==================================================
+
+PRIMARY GOAL
+
+Create a modern enterprise-grade platform that combines:
+
+* Responsible AI
+* Generative AI
+* Explainable AI
+* Machine Learning
+* Multi-Agent Systems
+* Compliance Automation
+* Real-Time Monitoring
+* Data Governance
+
+==================================================
+
+FREE GOOGLE TECHNOLOGY STACK
+
+Authentication
+
+* Firebase Authentication
+* Google Sign-In
+
+Database
+
+* Firestore
+
+Storage
+
+* Firebase Storage
+* Google Cloud Storage
+
+Hosting
+
+* Firebase Hosting
+
+Backend
+
+* FastAPI
+* Cloud Run
+
+AI Layer
+
+* Gemini 2.5 Flash
+* Gemini 2.5 Pro
+
+Analytics
+
+* BigQuery
+* Looker Studio
+
+Automation
+
+* Cloud Functions
+
+Integration
+
+* Google Sheets API
+* Google OAuth
+
+Monitoring
+
+* Cloud Monitoring
+
+==================================================
+
+ADDITIONAL OPEN SOURCE TECHNOLOGIES
+
+Frontend
+
+* React
+* Tailwind CSS
+* Material UI
+* Framer Motion
+* Recharts
+* Plotly
+
+Machine Learning
+
+* XGBoost
+* Random Forest
+* LightGBM
+
+Explainability
+
+* SHAP
+* LIME
+
+Fairness
+
+* Fairlearn
+* IBM AIF360
+
+Multi-Agent
+
+* LangGraph
+
+Synthetic Data
+
+* CTGAN
+* SDV
+
+Streaming
+
+* Kafka
+* Pub/Sub
+
+==================================================
+
+MODULE 1
+
+UNIVERSAL DATA INPUT HUB
+
+Support all input methods.
+
+DATA SOURCES
+
+CSV Upload
+
+Excel Upload
+
+Google Sheets
+
+BigQuery
+
+MySQL
+
+PostgreSQL
+
+MongoDB
+
+Google Drive
+
+Cloud Storage
+
+REST APIs
+
+Webhooks
+
+Kafka Streams
+
+Pub/Sub Streams
+
+Manual Form Entry
+
+Government Databases
+
+HR Platforms
+
+Education Platforms
+
+Supported Formats
+
+CSV
+
+XLSX
+
+JSON
+
+PDF
+
+DOCX
+
+TXT
+
+PARQUET
+
+==================================================
+
+MODULE 2
+
+DATASET HEALTH CENTER
+
+Generate a Dataset Health Report.
+
+Display:
+
+Dataset Health Score
+
+Missing Values
+
+Duplicate Records
+
+Class Imbalance
+
+Sensitive Information Found
+
+Data Quality Score
+
+Risk Indicators
+
+Recommendations
+
+Use simple language.
+
+==================================================
+
+MODULE 3
+
+BIAS RISK PREDICTOR
+
+Use XGBoost.
+
+Predict fairness risks before detailed analysis.
+
+Output:
+
+Low Risk
+
+Medium Risk
+
+High Risk
+
+Explain why the prediction was made.
+
+==================================================
+
+MODULE 4
+
+FAIRNESS REVIEW ENGINE
+
+Analyze:
+
+Gender
+
+Age
+
+Income
+
+Region
+
+Disability
+
+Education
+
+Custom Attributes
+
+Generate:
+
+Fairness Health Score
+
+Group Comparison
+
+Decision Distribution
+
+Risk Summary
+
+==================================================
+
+MODULE 5
+
+KEY DECISION DRIVERS
+
+Use SHAP.
+
+Identify the most influential factors.
+
+Show:
+
+Top Factors Affecting Decisions
+
+Most Influential Features
+
+Decision Impact Ranking
+
+Avoid technical terminology.
+
+==================================================
+
+MODULE 6
+
+DECISION CONSISTENCY CHECK
+
+Evaluate whether outcomes change unfairly when personal characteristics change.
+
+Show:
+
+Consistent
+
+Needs Review
+
+Potential Fairness Concern
+
+==================================================
+
+MODULE 7
+
+AUTOMATED IMPROVEMENT ENGINE
+
+Use Fairlearn.
+
+Capabilities:
+
+Reweighing
+
+Threshold Optimization
+
+Sampling Improvements
+
+Balanced Decision Suggestions
+
+Show:
+
+Current Fairness Score
+
+Improved Fairness Score
+
+Improvement Percentage
+
+==================================================
+
+MODULE 8
+
+SMART DATA GENERATOR
+
+Use CTGAN.
+
+Generate synthetic balanced data.
+
+Output:
+
+Original Dataset
+
+Generated Dataset
+
+Improvement Report
+
+==================================================
+
+MODULE 9
+
+MULTI AGENT AI GOVERNANCE SYSTEM
+
+Use LangGraph.
+
+Agent 1
+
+Fairness Reviewer
+
+Agent 2
+
+Reason Explorer
+
+Agent 3
+
+Compliance Reviewer
+
+Agent 4
+
+Improvement Advisor
+
+Agent 5
+
+Report Generator
+
+Workflow
+
+Input
+
+↓
+
+Review Fairness
+
+↓
+
+Identify Causes
+
+↓
+
+Check Compliance
+
+↓
+
+Recommend Improvements
+
+↓
+
+Generate Reports
+
+==================================================
+
+MODULE 10
+
+AI FAIRNESS COPILOT
+
+Powered by Gemini.
+
+User Questions:
+
+Why is this happening?
+
+How can fairness improve?
+
+What risks exist?
+
+What regulations apply?
+
+Generate simple explanations.
+
+==================================================
+
+MODULE 11
+
+DOCUMENT AUDITING
+
+Accept:
+
+PDF
+
+DOCX
+
+TXT
+
+Policies
+
+Compliance Documents
+
+Audit Reports
+
+Analyze:
+
+Risk Areas
+
+Compliance Gaps
+
+Fairness Issues
+
+==================================================
+
+MODULE 12
+
+GENERATIVE AI AUDITING
+
+Accept:
+
+Prompts
+
+Responses
+
+Conversation Logs
+
+Audit:
+
+Bias
+
+Toxicity
+
+Representation
+
+Stereotypes
+
+Hallucinations
+
+==================================================
+
+MODULE 13
+
+CHATBOT AUDITING
+
+Audit:
+
+Customer Support Bots
+
+HR Bots
+
+Banking Bots
+
+Educational Bots
+
+Evaluate:
+
+Fairness
+
+Consistency
+
+Safety
+
+==================================================
+
+MODULE 14
+
+RAG SYSTEM AUDITING
+
+Evaluate:
+
+Knowledge Base
+
+Retrieved Documents
+
+Generated Answers
+
+Check:
+
+Bias
+
+Missing Perspectives
+
+Hallucinations
+
+==================================================
+
+MODULE 15
+
+ML MODEL AUDITING
+
+Accept:
+
+Scikit-Learn Models
+
+XGBoost Models
+
+TensorFlow Models
+
+PyTorch Models
+
+Random Forest Models
+
+Evaluate:
+
+Fairness
+
+Explainability
+
+Governance
+
+Transparency
+
+==================================================
+
+MODULE 16
+
+COMPLIANCE CENTER
+
+Evaluate:
+
+GDPR
+
+EU AI Act
+
+NIST AI RMF
+
+ISO 42001
+
+Generate:
+
+Compliance Score
+
+Compliance Checklist
+
+Improvement Recommendations
+
+==================================================
+
+MODULE 17
+
+FAIRNESS DIGITAL TWIN
+
+Simulate:
+
+Hiring Policy Changes
+
+Admission Policy Changes
+
+Loan Approval Changes
+
+Threshold Changes
+
+Predict:
+
+Fairness Impact
+
+Performance Impact
+
+Risk Impact
+
+==================================================
+
+MODULE 18
+
+REAL TIME MONITORING CENTER
+
+Monitor:
+
+Live Decisions
+
+Fairness Trends
+
+Risk Trends
+
+Compliance Trends
+
+Data Quality Trends
+
+==================================================
+
+MODULE 19
+
+SMART ALERT CENTER
+
+Notify users when:
+
+Fairness decreases
+
+Compliance risk increases
+
+Data quality decreases
+
+Bias risk increases
+
+Channels:
+
+Dashboard
+
+Email
+
+Notifications
+
+==================================================
+
+MODULE 20
+
+FAIRNESS TIMELINE EXPLORER
+
+Track fairness over time.
+
+Show:
+
+Monthly Trends
+
+Historical Comparisons
+
+Trend Analysis
+
+==================================================
+
+MODULE 21
+
+AI GOVERNANCE SCORE
+
+Combine:
+
+Fairness
+
+Transparency
+
+Privacy
+
+Explainability
+
+Accountability
+
+Generate:
+
+Governance Score
+
+==================================================
+
+MODULE 22
+
+BENCHMARK CENTER
+
+Compare against:
+
+Industry Averages
+
+Historical Results
+
+Department Results
+
+==================================================
+
+MODULE 23
+
+FAIRLENS CERTIFICATION
+
+Generate:
+
+FairLens Certified
+
+Include:
+
+Fairness Score
+
+Governance Score
+
+Risk Level
+
+Issue Date
+
+Expiry Date
+
+==================================================
+
+FINAL POSITIONING
+
+Do not position FairLens as:
+
+"Upload CSV and detect bias."
+
+Position FairLens as:
+
+"FairLens AI is a Responsible AI Governance Platform powered by Gemini, Firebase, BigQuery, LangGraph, XGBoost, SHAP, Fairlearn, and CTGAN. The platform audits datasets, machine learning models, generative AI systems, chatbots, enterprise policies, RAG systems, and real-time AI decision streams to ensure fairness, transparency, accountability, and regulatory compliance."
+
+The UI should feel similar to Google Analytics, Google Search Console, Grammarly, and Power BI while remaining understandable for non-technical users.

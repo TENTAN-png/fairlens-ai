@@ -1,0 +1,23 @@
+# ── FairLens AI Backend — Hugging Face Spaces Dockerfile ──────────────────
+# Files are inside backend/ subfolder — this root Dockerfile handles that.
+FROM python:3.11-slim
+
+# System dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy from the backend subfolder to /app root
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY backend/ .
+
+# Hugging Face Spaces requires port 7860
+ENV PORT=7860
+EXPOSE 7860
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1"]
