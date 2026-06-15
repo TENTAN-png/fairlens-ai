@@ -25,6 +25,7 @@
 - [✨ Core Modules (20 Advanced Features)](#-core-modules)
 - [🧠 LangGraph-Powered Multi-Agent Auditor](#-multi-agent-ai-auditor)
 - [📖 Plain-English Translation System](#-plain-english-translation-system)
+- [🛠 Tools & Technologies Used](#-tools--technologies-used)
 - [🏗 Architecture](#-architecture)
 - [🛠 Getting Started](#-getting-started)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
@@ -130,6 +131,42 @@ To remain highly accessible to non-technical users, FairLens AI replaces complex
 | **SHAP / Feature Importance** | **Key Decision Drivers** | Unveils the features that influence the algorithm’s decision the most. |
 | **Bias Mitigation Algorithms** | **Improvement Suggestions** | Recommends methods like reweighting to adjust and correct unfair data patterns. |
 | **Protected Attributes** | **Personal Characteristics** | Columns representing sensitive classes (Gender, Race, Age, etc.). |
+
+---
+
+## 🛠 Tools & Technologies Used
+
+FairLens AI is built using a modern, scalable, and resilient technology stack distributed across the frontend client, backend machine learning server, and Google Cloud services:
+
+### 📱 Frontend Stack
+*   **React 18 + Vite:** Next-generation build tooling and single-page application framework for fast, reactive hot module replacement.
+*   **Vanilla CSS3:** Highly optimized, customizable Material Design-style components using CSS custom variables for seamless Dark/Light theme switching.
+*   **Recharts:** Dynamic, responsive, and SVG-based charting library for visualizing fairness scores, radar charts, and intersectional group distributions.
+*   **PapaParse:** Fast, client-side CSV parser processing dataset uploads locally without transmitting sensitive information to servers.
+*   **Lucide React:** Consistent, clean, modern vector iconography.
+*   **React Router DOM:** Client-side routing management.
+
+### 🐍 Backend ML Stack (Python)
+*   **FastAPI:** High-performance, modern ASGI web framework for building the ML APIs, with automated Swagger docs at `/api/docs`.
+*   **XGBoost:** Gradient boosting machine learning classifier used to predict bias risks in corporate datasets.
+*   **SHAP (Shapley Additive exPlanations):** Explains model outputs using cooperative game theory to expose feature contributions (Key Decision Drivers).
+*   **Fairlearn:** Open-source toolkit by Microsoft used to assess and mitigate demographic parity disparities (Reweighing algorithms).
+*   **CTGAN & SDV (Synthetic Data Vault):** Conditional Generative Adversarial Networks (GANs) for generating highly accurate, balanced synthetic rows to mitigate minority group disparities.
+*   **Uvicorn:** Ultra-fast ASGI server for hosting Python applications.
+*   **Pandas & NumPy:** Core data structures and mathematical utilities.
+
+### 🧠 AI & Orchestration Layer
+*   **Google Gemini API (Primary):** Powers the core 5-agent auditing chain, conversational AI copilot, localized explanations, and Python mitigation code generation.
+*   **Groq API (Llama 3 Fallback):** Multi-model high-speed API fallback keeping the agent orchestrator online under network constraints.
+*   **LangGraph Logic:** Client-side sequential workflow runner orchestrating state transitions between specialized LLM agents.
+
+### ☁️ Infrastructure & Services
+*   **Firebase Authentication:** Handles secure user authentication, supporting Google Sign-In and standard Email/Password accounts.
+*   **Cloud Firestore:** Real-time NoSQL database storing audit reports, certs, and user history.
+*   **Firebase Hosting:** Deploys and serves the static frontend globally.
+*   **Docker:** Containerized setup for cloud deployments (`Dockerfile.hf`).
+*   **Hugging Face Spaces:** Hosts the FastAPI containerized ML backend on a scalable environment.
+*   **Google Fonts:** Outfit, Roboto, and Google Sans typography styles.
 
 ---
 
