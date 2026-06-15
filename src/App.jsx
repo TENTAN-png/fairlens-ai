@@ -256,7 +256,7 @@ function App() {
               <Cpu className="nav-icon" size={18} /> AI System Audit
             </button>
             <button className={`sidebar-nav-item ${location.pathname === '/model-inspection' ? 'active' : ''}`} onClick={() => { navigate('/model-inspection'); setSidebarOpen(false); }}>
-              <Cpu className="nav-icon" size={18} /> Model Inspector
+              <Cpu className="nav-icon" size={18} /> Model Inspection Studio
             </button>
           </div>
 

@@ -1,7 +1,7 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis,
-  PolarRadiusAxis, Radar
+  PolarRadiusAxis, Radar, Legend
 } from 'recharts';
 import { ArrowLeft, Sparkles, TrendingUp, AlertTriangle, CheckCircle, Info, Download } from 'lucide-react';
 import InfoTooltip from './InfoTooltip';
@@ -219,12 +219,14 @@ export default function BiasReport({ analysisResult, onGetInsights, onGoBack }) 
           </div>
           <div className="chart-container" style={{ height: 280 }}>
             <ResponsiveContainer>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#e5e7eb" />
-                <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: '#6b7280' }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
-                <Radar name="Score" dataKey="value" stroke="#0d9488" fill="#0d9488" fillOpacity={0.15} strokeWidth={2} />
-                <Radar name="Threshold" dataKey="threshold" stroke="#d1d5db" fill="none" strokeDasharray="5 5" />
+              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+                <PolarGrid stroke="var(--gray-300)" />
+                <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: 'var(--gray-600)', fontWeight: 600 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--gray-400)' }} axisLine={false} tickLine={false} />
+                <Radar name="Score" dataKey="value" stroke="var(--blue)" fill="var(--blue)" fillOpacity={0.35} strokeWidth={2} dot={{ r: 4, fill: 'var(--white)', stroke: 'var(--blue)', strokeWidth: 2 }} activeDot={{ r: 6, fill: 'var(--blue)', stroke: 'var(--white)' }} />
+                <Radar name="Threshold" dataKey="threshold" stroke="var(--gray-400)" fill="none" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                <Tooltip wrapperStyle={{ outline: 'none' }} contentStyle={{ borderRadius: 8, border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-2)', padding: '8px 12px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)' }} itemStyle={{ fontSize: 13, fontWeight: 600 }} labelStyle={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

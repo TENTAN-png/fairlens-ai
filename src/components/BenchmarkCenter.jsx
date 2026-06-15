@@ -217,15 +217,15 @@ export default function BenchmarkCenter({ analysisResult }) {
         </div>
         <div style={{ height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData}>
-              <PolarGrid stroke="var(--gray-200)" />
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
-              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
-              <Radar name="Your Score" dataKey="yourScore" stroke="var(--blue)" fill="var(--blue)" fillOpacity={0.2} strokeWidth={2} />
-              <Radar name="Industry Avg" dataKey="industryAvg" stroke="var(--gray-400)" fill="var(--gray-400)" fillOpacity={0.1} strokeWidth={1.5} strokeDasharray="5 5" />
-              <Radar name="Top Performers" dataKey="topPerformer" stroke="var(--green)" fill="var(--green)" fillOpacity={0.05} strokeWidth={1.5} strokeDasharray="3 3" />
-              <Legend />
-              <Tooltip content={<CustomTooltip />} />
+            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+              <PolarGrid stroke="var(--gray-300)" />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--gray-600)', fontWeight: 600 }} />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--gray-400)' }} axisLine={false} tickLine={false} />
+              <Radar name="Your Score" dataKey="yourScore" stroke="var(--blue)" fill="var(--blue)" fillOpacity={0.35} strokeWidth={2} dot={{ r: 4, fill: 'var(--white)', stroke: 'var(--blue)', strokeWidth: 2 }} activeDot={{ r: 6, fill: 'var(--blue)', stroke: 'var(--white)' }} />
+              <Radar name="Industry Avg" dataKey="industryAvg" stroke="var(--gray-400)" fill="none" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+              <Radar name="Top Performers" dataKey="topPerformer" stroke="var(--green)" fill="none" strokeWidth={2} strokeDasharray="2 2" dot={false} />
+              <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+              <Tooltip content={<CustomTooltip />} wrapperStyle={{ outline: 'none' }} cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }} />
             </RadarChart>
           </ResponsiveContainer>
         </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   BarChart3, Shield, AlertTriangle, TrendingUp, TrendingDown,
-  Activity, CheckCircle, ArrowRight, Zap, Users, Building2
+  Activity, CheckCircle, ArrowRight, Zap, Users, Building2, Cpu
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -209,6 +209,9 @@ export default function GovernanceDashboard({ analysisResult, onNavigate }) {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button className="btn btn-primary" onClick={() => onNavigate('/analyze')}>
             <BarChart3 size={14} /> Analyze Dataset
+          </button>
+          <button className="btn btn-secondary" onClick={() => onNavigate('/model-inspection')}>
+            <Cpu size={14} /> Model Inspection
           </button>
           <button className="btn btn-secondary" onClick={() => onNavigate('/audit')}>
             <Users size={14} /> Multi-Agent Audit

@@ -219,14 +219,14 @@ Provide a 3-4 sentence executive summary noting what improved most, what still n
           </div>
           <div style={{ height: 280 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="var(--gray-200)" />
-                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11 }} />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} />
-                <Radar name="Before" dataKey="Before" stroke="var(--red)" fill="var(--red)" fillOpacity={0.15} strokeWidth={2} />
-                <Radar name="After" dataKey="After" stroke="var(--green)" fill="var(--green)" fillOpacity={0.15} strokeWidth={2} />
-                <Legend />
-                <Tooltip />
+              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+                <PolarGrid stroke="var(--gray-300)" />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--gray-600)', fontWeight: 600 }} />
+                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--gray-400)' }} axisLine={false} tickLine={false} />
+                <Radar name="Before" dataKey="Before" stroke="var(--red)" fill="var(--red)" fillOpacity={0.2} strokeWidth={2} dot={{ r: 4, fill: 'var(--white)', stroke: 'var(--red)', strokeWidth: 2 }} activeDot={{ r: 6, fill: 'var(--red)', stroke: 'var(--white)' }} />
+                <Radar name="After" dataKey="After" stroke="var(--green)" fill="var(--green)" fillOpacity={0.35} strokeWidth={2} dot={{ r: 4, fill: 'var(--white)', stroke: 'var(--green)', strokeWidth: 2 }} activeDot={{ r: 6, fill: 'var(--green)', stroke: 'var(--white)' }} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+                <Tooltip wrapperStyle={{ outline: 'none' }} contentStyle={{ borderRadius: 8, border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-2)', padding: '8px 12px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)' }} itemStyle={{ fontSize: 13, fontWeight: 600 }} labelStyle={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

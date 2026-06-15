@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { ShieldCheck, Info, CheckSquare, Square, RefreshCw, BarChart, FileText } from 'lucide-react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { generateAIInsights } from '../utils/geminiAPI';
 
 const INITIAL_PILLARS = {
@@ -121,12 +121,18 @@ Format your response as a professional executive brief. Use bullet points and bo
 
           <div style={{ width: '100%', height: 260, display: 'flex', justifyContent: 'center', margin: '10px 0' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                <PolarGrid stroke="var(--border)" opacity={0.3} />
-                <PolarAngleAxis dataKey="subject" stroke="var(--text-secondary)" style={{ fontSize: '0.8125rem', fontWeight: 500 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="var(--border)" tick={{ fill: 'var(--text-tertiary)', fontSize: 10 }} />
-                <Radar name="Trust Index" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.25} />
-              </RadarChart>
+              {(() => {
+                const radarColor = scores.overall >= 80 ? 'var(--green)' : scores.overall >= 50 ? 'var(--amber)' : 'var(--red)';
+                return (
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+                    <PolarGrid stroke="var(--gray-300)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--gray-600)', fontWeight: 600 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--gray-400)' }} axisLine={false} tickLine={false} />
+                    <Radar name="Trust Index" dataKey="value" stroke={radarColor} fill={radarColor} fillOpacity={0.35} strokeWidth={2} dot={{ r: 4, fill: 'var(--white)', stroke: radarColor, strokeWidth: 2 }} activeDot={{ r: 6, fill: radarColor, stroke: 'var(--white)' }} />
+                    <Tooltip wrapperStyle={{ outline: 'none' }} contentStyle={{ borderRadius: 8, border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-2)', padding: '8px 12px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)' }} itemStyle={{ fontSize: 13, fontWeight: 600 }} labelStyle={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }} />
+                  </RadarChart>
+                );
+              })()}
             </ResponsiveContainer>
           </div>
 

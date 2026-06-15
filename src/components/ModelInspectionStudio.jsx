@@ -53,6 +53,37 @@ export default function ModelInspectionStudio() {
     setConfig(prev => ({ ...prev, [field]: val }));
   };
 
+  const loadSampleFiles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const datasetRes = await fetch('/sample_credit_dataset.csv');
+      if (!datasetRes.ok) throw new Error('Failed to fetch dataset');
+      const datasetBlob = await datasetRes.blob();
+      const datasetFileObj = new File([datasetBlob], 'sample_credit_dataset.csv', { type: 'text/csv' });
+      setDatasetFile(datasetFileObj);
+
+      const modelRes = await fetch('/sample_credit_model.pkl');
+      if (!modelRes.ok) throw new Error('Failed to fetch model');
+      const modelBlob = await modelRes.blob();
+      const modelFileObj = new File([modelBlob], 'sample_credit_model.pkl', { type: 'application/octet-stream' });
+      setModelFile(modelFileObj);
+
+      setConfig({
+        targetCol: 'Approved',
+        sensitiveCol: 'Gender',
+        favorableValue: '1',
+        privilegedValue: 'Male'
+      });
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load sample files. Please check if they are in the public folder.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const executeTabAction = async (tabId = activeTab) => {
     if (!datasetFile) {
       setError('Please upload a test dataset CSV/Excel first.');
@@ -127,10 +158,13 @@ export default function ModelInspectionStudio() {
 
       {/* Upload and Configuration Header */}
       <div className="card" style={{ marginBottom: 24 }}>
-        <div className="card-header">
-          <span className="card-title">
+        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Upload size={16} /> Model & Dataset Inputs
           </span>
+          <button className="btn btn-secondary btn-sm" onClick={loadSampleFiles} disabled={loading}>
+            <Sparkles size={12} style={{ marginRight: 4 }} /> Load Sample Files
+          </button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 16 }}>
@@ -284,9 +318,23 @@ export default function ModelInspectionStudio() {
         <div className="card" style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           <Cpu size={32} style={{ margin: '0 auto 12px', color: 'var(--accent)', opacity: 0.8 }} />
           <h3>Awaiting Model Inputs</h3>
-          <p style={{ maxWidth: 460, margin: '6px auto 0', fontSize: '0.875rem' }}>
+          <p style={{ maxWidth: 460, margin: '6px auto 12px', fontSize: '0.875rem' }}>
             Please select a test dataset file and configure mappings above. You can also upload your own pre-trained python model binary.
           </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
+            <button className="btn btn-primary" onClick={loadSampleFiles} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Sparkles size={14} />
+              Load Sample Model & Dataset
+            </button>
+            <a href="/sample_credit_dataset.csv" download className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Download size={14} />
+              Download Sample CSV
+            </a>
+            <a href="/sample_credit_model.pkl" download className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Download size={14} />
+              Download Sample Model (.pkl)
+            </a>
+          </div>
         </div>
       )}
 
